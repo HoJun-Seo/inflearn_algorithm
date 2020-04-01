@@ -1,2 +1,2 @@
 # inflearn_algorithm
-인프런_영리한 프로그래밍을 위한 알고리즘
+알고리즘 학습을 위한 Repository 입니다.
