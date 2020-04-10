@@ -24,7 +24,7 @@ public class Maze {
 	public static boolean findMazePath(int x, int y) { //(x,y) 에서 부터 출구까지 가는 경로가 있는지 검사하는 함수
 		if(x < 0 || y < 0 || x >= N || y >= N) return false; // 재귀 호출 시 좌표가 음수가 되는 경우를 체크한다.(미로 범위에 유효한 범위 인지를 체크)
 		else if(maze[x][y] != PATHWAY_COLOUR) return false; //green 이거나 red, 또는 blue 인 경우 
-		else if(x == N - 1 && y == N - 1) { //현재 위치가 출구인 경우
+		else if(x == N - 1 && y == N - 1) { //현재 위치가 
 			maze[x][y] = PATH_COLOUR;
 			return true;
 		}
