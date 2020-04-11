@@ -4,7 +4,7 @@ public class N_queens_problem {
 	int [] cols = new int [N + 1];
 	boolean queens(int level) // return-type 은 일단 boolean 으로 선언. 즉, 성공이냐 실패냐를 반환한다.
 	{
-		if(!promising(level) //현재 노드가 꽝인지 아닌지를 판단(non-promising))
+		if(!promising(level)) //현재 노드가 꽝인지 아닌지를 판단(non-promising))
 			return false;
 		else if (level == N){
 		// promising 테스트를 통과했다는 가정하에 level == N 이면 모든 말이 놓였다는 의미이고, 따라서 성공이다.
