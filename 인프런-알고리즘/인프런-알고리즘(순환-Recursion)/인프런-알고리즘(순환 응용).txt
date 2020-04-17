@@ -1,0 +1,42 @@
+Maze(미로)
+2차원 grid 에서 (0,0)을 입구로 설정
+recursion 보다 더 간결한 경우는 생각하기 어렵다.
+
+Recursive Thinking
+현재 위치에서 출구까지 가는 경로가 있으려면
+1. 현재 위치가 출구이거나 혹은,
+2. 이웃한 셀들 중 하나에서 현재 위치를 지나지 않고 출구까지 가는 경로가 있거나
+
+미로찾기(Decision problem) - yes or no 인 문제
+boolean findPath(x,y)
+	if(x,y) is the exit
+		return true;
+	else
+		for each neighbouring cell (x', y') of (x,y) do
+			if(x',y') is on the pathway
+				if findPath(x',y') return true; //재귀 호출
+		return false; //경로가 없다.
+기본적으로 고려해야 할것은 이것이 무한 루프에 빠지지는 않는가를 생각해보는 것.
+위의 경우 무한 루프에 빠질 수 있다.
+(x',y') 의 좌표 입장에서 보면 이동해 왔던 (x,y) 좌표에 대해 이웃한 셀이기 때문(무한히 왔다갔다 하는 상황이 생길 수 있음)
+
+boolean findPath(x,y)
+	if(x,y) is the exit
+		return true;
+	else
+		mark (x,y) as a visited cell; //방문한 셀 마킨
+		for each neighbouring cell (x', y') of (x,y) do
+			if(x',y') is on the pathway and not visited (이동할 수 있는 cell 인 동시에 이미 방문했던 셀이 아니라면)
+				if findPath(x',y') return true; //재귀 호출
+		return false; //경로가 없다.
+
+boolean finaPath(x,y)
+	if(x,y) is either on the wall or a visited cell //호출된 위치 (x,y) 가 벽이거나 이미 방문한 셀 이라면 false 를 리턴
+		return false;
+	else if (x,y) is the exit
+		return true;
+	else
+		mark (x,y) as a visited cell;
+		for each neighbouring cell (x',y') of (x,y) do // 이웃한 셀이 벽인지 길 인지 검증하지 검증하지 않는다(앞 전에 재귀 호출을 통해 검증되기 때문)
+			if findPath(x',y') return true;
+		return false;

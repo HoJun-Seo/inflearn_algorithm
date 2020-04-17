@@ -1,0 +1,40 @@
+멱집합(powerset) - 어떤 집합의 모든 부분 집합의 집합
+크기가 n 인 집합에 대해서 해당 집합의 부분 집합들을 모두 출력시키는 방법?
+{a,b,c,d,e,f} 의 모든 부분 집합을 나열하려면
+- a 를 제외한 {b,c,d,e,f} 의 모든 부분 집합들을 나열하고
+- {b,c,d,e,f} 의 모든 부분 집합에 {a} 를 추가한 집합들을 나열한다.
+집합에서 하나의 원소를 제외한 원소들의 집합을 찾을 수 있다면, 해당 원소를 포함하는 전체 집합의 부분 집합을 모두 찾을 수 있다.
+
+{b,c,d,e,f} 의 모든 부분집합에 {a} 를 추가한 집합들을 나열하려면
+- {c,d,e,f} 의 모든 부분 집합들에 {a} 를 추가한 집합들을 나열하고
+- {c,d,e,f} 의 모든 부분 집합에 {a,b} 를 추가한 집합들을 나열한다.
+
+{c,d,e,f} 의 모든 부분집합에 {a} 를 추가한 집합들을 나열하려면
+- {d,e,f} 의 모든 부분 집합들에 {a} 를 추가한 집합들을 나열하고
+- {d,e,f} 의 모든 부분 집합에 {a,c} 를 추가한 집합들을 나열한다.
+
+슈도코드
+powerSet(S) //S 는 집합이다.(S의 멱집합을 출력해야함)
+if S is an empty set
+	print nothing; //공집합 출력
+else
+	let t be the first element of S;
+	find all subsets of S-{t} by calling powerSet(S - {t});
+	print the subsets; //(x) - print 가 아니라 return 을 해줘야 한다.
+	print the subsets with adding t; //(x) - print 가 아니라 return 을 해줘야 한다.
+
+
+powerSet(P, S) : S 의 멱집합을 구한 후 각각에 집합 P를 합집합하여 출력하라.
+if S is an empty set // base case
+	print p;
+else
+	let t be the first element of S;
+	powerSet(P, S - {t}); //t 포함 (x)
+	powerSet(P u {t}, S - {t}); //t 포함 (o)
+//recursion 함수가 두 개의 집합을 매개변수로 받도록 설계해야 한다.
+두 번째 집합의 모든 부분집합들에 첫 번째 집합을 합집합하여 출력한다. 
+
+상태 공간트리(state space tree)
+- 해를 찾기 위해 탐색할 필요가 있는 모든 후보들을 포함하는 트리
+- 트리의 모든 노드들을 방문하면 해를 찾을 수 있다.(정의에 가까움 - 실제 모든 노드를 방문하는 것은 비효율적이다.)
+- 루트에서 출발하여 체계적으로 모든 노드를 방문하는 절차를 기술한다.

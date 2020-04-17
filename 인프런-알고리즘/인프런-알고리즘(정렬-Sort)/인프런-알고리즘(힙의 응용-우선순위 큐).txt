@@ -1,0 +1,36 @@
+힙의 응용 : 우선순위 큐
+최대 우선순위 큐(maximum priority queue) 는 다음의 두 가지 연산을 지원하는 자료구조이다.
+- INSERT(x) : 새로운 원소 x 를 삽입 
+- EXTRACT_MAX() : 최대값을 삭제하고 반환 - 큐에 있는 데이터를 꺼낼때 우선순위에 따라 데이터를 꺼낼수 있다.
+최소 우선순위 큐(minimum priority queue) 는 EXTRACT-MAX 대신 EXTRACT_MIN 을 지원하는 자료구조
+MAX HEAP 을 이용하여 최대 우선순위 큐를 구현한다.
+
+heap 은 기본적으로 complete binary tree 여야 한다.
+
+INSERT algorithm
+MAX-HEAP-INSERT(A, key) { // A : 현재 힙, key : 새로 추가할 값
+	heap_size = heap_size + 1;
+	A[heap_size] = key; //현재 트리 제일 마지막 자리에 새로운 키 값을 추가한다.
+	i = heap_size; //문제아 노드 : 새로 추가된 데이터의 위치
+	while (i > 1 and A[PARENT(i)] < A[i]) { // i > 1 : root 가 아님, A[i] 값이 문제아 노드에 저장된 데이터가 부모 노드에 저장된 값보다 클 경우
+		exchange A[i] and A[PARENT(i)];
+		i = PARENT(i); //문제아 노드의 부모 노드가 새로운 문제아 노드가 된다.
+	}
+} - 시간 복잡도 O(log2n)
+
+EXTRACT_MAX() : 힙의 최댓값을 힙에서 제거해준 후 반환한다.
+힙에서 최댓값은 항상 root 에 존재한다.
+제거 이후 노드의 갯수가 하나 줄어야 한다. - 그러면서 complete binary tree 의 형태가 유지되어야 한다.
+제일 마지막 노드의 위치를 삭제하게 되면 complete binary tree 의 형태를 계속 유지 할 수 있다.(마지막 노드에 있던 데이터는 일단 루트 노드로 옮겨 놓는다.)
+루트 노드로 옮겨간 마지막 노드 값의 properity 를 지키기 위해 max-HEAPIFY 를 수행하여 힙 정렬을 완료해준다.
+
+슈도 코드
+HEAP-EXTRACT-MAX(A)
+1 if heap-size[A] < 1 // 힙이 비었음
+2	then error "heap underflow"
+3 max <- A[1] //최댓값을 max 에 저장
+4 A[1] <- A[heap-size[A]] //마지막 노드의 값을 루트 노드로 옮김
+5 heap-size[A] <- heap-size[A] - 1 //힙의 크기를 1 줄인다.
+6 MAX-HEAPIFY(A, 1) //MAX-HEAPIFY 를 수행한다.
+7 return max
+- 시간 복잡도 O(log2n)	

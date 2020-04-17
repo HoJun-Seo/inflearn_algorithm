@@ -1,0 +1,73 @@
+N-queens problem(Backtracking 기법 - 지나온 궤적을 다시 되돌아 나간다.)
+
+하나의 말이 동일한 행에 놓일 수 없다,(하나의 행 마다 하나의 말이 놓여야 함)
+
+상태공간 트리(backtracking 과정을 시각적으로 가시화 하는 트리)란 찾는 해를 포함하는 트리
+즉, 해가 존재한다면 그것은 반드시 이 트리의 어떤 한 노드에 해당한다.
+따라서 이 트리를 체계적으로 탐색하면 해를 구할 수 있다. - 체스 보드(8 x 8) 에 말을 놓을 수 있는 경우의 수를 반드시 포함하고 있음.
+
+상태공간 트리의 모든 노드를 탐색해야 하는 것은 아니다.
+- 탕색 중 조건에 충돌하는 노드에 접근했을 경우 Backtracking 을 통해 이전 노드로 돌아간다.(infeasible or non-promising)
+- 되추적 기법(Backtracking) : 상태 공간 트리를 깊이 우선 방식(깊이 우선 탐색)으로 탐색하여 해를 찾는 알고리즘을 말함.
+코딩시 recursion 또는 stack 을 사용가능 하나 recursion 을 사용하는 것이 쉽고 간편하다.
+
+Design Recursion
+return-type queens(arguments //매개변수는 내가 현재 트리의 어떤 노드에 있는지를 지정해야 한다.)
+{
+	if non-promising //꽝 - 해당 노드는 답이 될 가능성이 없다.
+		report failure and return;
+	else if success
+		report answer and return;
+	else
+		visit children recursively;
+}
+
+매개변수 level 은 현재 노드의 위치를 표현하고, 1번에서 level 번째 말이 어디에 놓였는지는 전역변수 배열 cols 로 표현하자
+cols[i] = j 는 i번 말이 (i행, j열) 에 놓였음을 의미한다.
+int [] cols = new int[N + 1];
+return-type queens(int level)
+{
+	if non-promising
+		report failure and return;
+	else if success
+		report answer and return;
+	else
+		visit children recursively;
+}
+
+int [] cols = new int [N + 1];
+boolean queens(int level) // return-type 은 일단 boolean 으로 선언. 즉, 성공이냐 실패냐를 반환한다.
+{
+	if(!promising(level)) //현재 노드가 꽝인지 아닌지를 판단(non-promising))
+		return false;
+	else if (level == N){
+	// promising 테스트를 통과했다는 가정하에 level == N 이면 모든 말이 놓였다는 의미이고, 따라서 성공이다.
+		for(int i = 1; i <= N; i++)
+			System.out.println("(" + i + "," + cols[i] + ")");
+		return true;
+	}
+	for(int i = 1; i <= N; i++){
+		cols[level + 1] = i;
+		if(queens(level + 1)) return true;
+		//level + 1 번째 말을 각각의 열에 놓은 후 recursion 을 호출한다.
+	}
+	return false;
+}
+
+	1 2 3 4 5 6 7 8
+cols   :   1 4 2 3
+- 1 4 2 : 이 말들 간에는 충돌이 없음이 보장되어 있다.
+- 3 : 따라서 마지막에 놓인 이 말이 이전에 놓인 다른 말 들과 충돌하는지 검사하는 것으로 충분하다.
+
+promising test
+boolean promising(int level)
+{
+	for(int i = 1; i < level; i++) {
+		if(cols[i] == cols[level]) //같은 열에 놓였는지 검사
+			return false;
+		else if (level - i == Math.abs(cols[level] - cols[i])) //같은 대각선에 놓였는지 검사
+			return false;
+	}
+	return true;
+}
+	
