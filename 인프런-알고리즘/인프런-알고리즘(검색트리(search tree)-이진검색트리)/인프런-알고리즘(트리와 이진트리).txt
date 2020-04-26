@@ -1,0 +1,108 @@
+트리와 이진트리(Tree and Binary Tree)
+
+트리(Tree)
+계층적인 구조를 표현
+- 조직도
+- 디렉토리와 서브 디렉토리 구조
+- 가계도
+
+트리는 노드(node) 들과 노드들을 연결하는 링크(link) 들로 구성된다.(부모노드 - 자식노드)
+맨 위의 노드를 "루트(root)" 라고 부른다.
+노드들을 연결하는 선을 "link", "edge", "branch" 등 으로 부른다.
+
+트리에서의 형제관계
+동일한 부모 노드를 가진 자식 노드들을 형제(sibling) 관계에 있다고 한다.
+루트 노드를 제외한 트리의 모든 노드들은 유일한 부모 노드를 가진다.(루트 노드는 부모 노드가 존재하지 않는다.)
+
+자식이 없는 노드를 leaf node 라고 부른다.
+리프노드가 아닌 노드들을 내부(internal) 노드라고 부른다.
+
+부모-자식 관계확장 -> 조상 - 자손(ancestor-descendant) 관계
+부모 - 자식1 - 자식2 : 부모 - 자식2(조상 - 자손 관계)
+
+부트리(sub stree)
+트리에서 어떤 한 노드와 그 노드의 자손들로 이루어진 트리를 부트리(sub tree) 라고 부른다.
+트리의 레벨 : 각 계층마다 레벨 값이 증가함 : root node -> level 0 or 1
+트리의 높이 : 레벨의 값에 따라간다.
+
+트리의 기본적인 성질
+노드가 N개엔 트리는 항상 N - 1 개의 링크(link) 를 가진다.
+루트에서 어떤 노드로 가는 경로는 유일하다. 또한 임의의 두 노드간의 경로도 유일하다.(같은 노드를 두 번 이상 방문하지 않는다는 조건하에)
+
+이진 트리(Binary tree)
+이진 트리에서 각 노드는 최대 2개의 자식을 가진다.
+각각의 자식 노드는 자신이 부모의 왼쪽 자식인지 오른쪽 자식인지가 지정된다.(자식이 한 명인 경우에도 포함)
+
+이진 트리 응용의 예 : Expression Tree : 수식 표현(컴파일러가 수식을 해석하는 과정 - parsing - 어떤것을 먼저 순서대로 계산해야 하는가.)
+Huffman code : 허프만 코드
+- 어떤 데이터를 압축 또는 인코딩을 하는 기본적인 알고리즘 중 하나
+
+Full and Complete Binary Trees(heap)
+높이가 h 인 full binary tree 는 2^h - 1 개의 노드를 가진다.
+노드가 N 개인 full 혹은 complete 이진 트리의 높이는 O(logN) 이다.(노드가 N개인 이진트리의 높이는 최악의 경우 N이 될 수도 있다.)
+
+연결 구조(Linked Structure) 표현(연결 리스트 - 각각의 노드가 다음 노드의 주소를 가지고 있다.)
+각 노드에 하나의 데이터 필드와 왼쪽자식(left), 오른쪽 자식(right), 그리고 부모노드(p)의 주소를 저장한다.
+(부모 노드의 주소는 반드시 필요한 경우가 아니면 보통 생략한다.)
+트리에서는 보통 루트에서 내려가면서 탐색을 하기 때문에 보통 부모 노드를 생략하는 경우가 많지만 반드시 그런것은 아니다.
+경우에 따라 부모 노드가 누구인지를 쉽게 알아내는 것이 중요한 경우 각각의 노드에 부모 노드의 주소를 저장해두는 것도 좋은 아이디어 이다.
+루트 노드의 주소는 따로 보관한다.
+
+이진 트리의 순회(traversal)
+트리는 연결리스트 들이 일렬로 늘어서 있는 것이 아니기 때문에 모든 노드를 방문하는 데 있어 여러가지 방법이 있을 수 있다.
+순회 : 이진 트리의 모든 노드를 방문하는 일
+중순위(inorder) 순회
+선순위(preorder) 순회
+후순위(postorder) 순회
+레벨오더(level-order) 순회
+
+이진 트리의 Inorder 순회
+TL - r - TR (이진트리를 루트 노드r, 왼쪽 부트리 TL, 그리고 오른쪽 부트리TR로 나누어 생각한다.(트리 전체를 세 부분으로 나눠서 생각한다.))
+1. 먼저 TL을 inorder 로 순회하고,
+2. r 을 순회하고
+3. TR 을 inorder 로 순회한다.
+ - 전체를 inorder traversal 하기 위해 트리의 부트리 들 까지 inorder traversal 을 거쳐야 하므로 본질적으로 recursive 한 알고리즘 이라고 할 수 있다.
+
+슈도 코드
+INORDER-TREE-WALK(x) : x - root node
+1 if x != NIL(NULL)
+2	then 	INORDER-TREE-WALK(left[x]) //왼쪽 자식 또는 부트리(recursion)
+		print key[x]
+4		INORDER-TREE-WALK(right[x]) // 오른쪽 자식 또는 부트리(recursion) 
+x 를 루트로 하는 트리를 inorder 순회 : 시간복잡도 O(n)
+
+Postorder 와 preorder 순회
+PREORDER-TREE-WALK(x)
+	if x != NIL
+	then	print key[x]
+	            PRE-ORDER-TREE-WALK(left[x])
+		PRE-ORDER-TREE-WALK(right[x])
+
+POSTORDER-TREE-WALK(x)
+	if x != NIL
+	then	POST-ORDER-TREE-WALK(left[x])
+		POST-ORDER-TREE-WALK(right[x])
+		print key[x]
+
+Expression Trees
+- Expression tree 를 inorder 순회
+: x + y * a + b / c (연산의 우선순위가 고려되지 않음)
+각 부트리를 순회할 때 시작과 종료시에 괄호를 추가하면 다음과 같이 올바른 수식이 출력됨
+: (x + y) * ((a + b) / c)
+Postorder 순회하면 후위표기식이 출력된다.
+x y + a b + c / *
+
+Level-order 순회
+레벨 순으로 방문, 동일 레벨에서는 왼쪽에서 오른쪽 순서로
+큐(queue) 를 이용하여 구현
+
+슈도 코드
+LEVEL-ORDER-TREE-TRAVERSAL()
+	visit the root;
+	Q <- root; //Q is a queue
+	while Q is not empty do
+		v <- dequeue(Q);
+		visit children of v;
+		enqueue children of v into Q;
+	end.
+end.

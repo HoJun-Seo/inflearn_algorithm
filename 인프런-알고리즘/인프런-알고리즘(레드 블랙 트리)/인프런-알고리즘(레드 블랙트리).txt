@@ -1,0 +1,225 @@
+레드 블랙트리(Red-Black Tree)
+binary search tree 를 이용해서 저장하는 데이터들이 랜덤한 데이터라면 search, insert, delete 의 평균적인 시간복잡도가 O(logN) 이 된다.
+하지만 현실에서의 데이터는 항상 랜덤하지 않다.(이미 정렬되어 있다던가...) - 최악의 경우 시간복잡도가 O(N) 이 될 수 있다.
+트리가 완벽하게 밸런스가 맞춰져 있다면 이진 검색과 완전히 동일한 프로세스가 벌어지게 된다.
+
+insert 하거나 delete 할 때 트리의 밸런스가 어느 한쪽으로 치우치지 않도록 트리의 노드들을 조정해서 균형을 잡아줘야 한다.
+어떤 경우에도 트리의 밸런스가 한쪽으로 치우치지 않도록 insert, delete 알고리즘을 좀 더 복잡하게 만들어서 많이 사용하고 있다.
+그 중 대표적인 예가 바로 레드 블랙트리 이다.
+
+이진 탐색트리의 일종
+균형잡힌 트리 : 높이가 O(log2n) //높이를 최대한 유지
+search, insert, delete 연산을 최악의 경우에도 O(log2n) 시간으로 지원하게 된다.
+(각 연산의 시간복잡도는 트리의 높이에 비례하게 된다.)
+
+- 각 노드는 하나의 키(key), 왼쪽자식(left), 오른쪽자식(right), 그리고 부모노드(p) 의 주소를 저장한다. (부모 노드의 경우 반드시 필요한 것은 아님 - 다만 레드 블랙트리의 경우 구현이 쉬워지는 측면이 있기 때문에 일단 저장해 둔다.)
+- 자식노드가 존재하지 않을 경우 NIL 노드 라고 부르는 특수한 노드가 있다고 가정한다.
+- 따라서 모든 리프노드는 NIL 노드이다.
+- 루트의 부모도 NIL 노드라고 가정한다.
+- 노드들은 내부노드(실제 데이터를 가지고 있는 노드)와 NIL 노드로 분류한다.
+위는 설명을 편하게 하기 위한 용도로 활용된다. - 실제로 구현할 땐 NIL 노드를 실제로 구현하진 않는다.
+
+레드 블랙트리의 정의
+아래의 조건을 만족하는 이진 탐색트리
+1. 각 노드는 red 혹은 black 이고,
+2. 루트 노드는 black 이고,
+3. 모든 리프노드(즉, NIL)노드는 black 이다.
+4. red 노드의 자식노드들은 전부 black 이고(즉, red 노드는 연속되어 등장하지 않는다.) //black 노드의 자식 노드가 black 노드인 경우는 존재
+5. 모든 노드에 대해서 그 노드로부터 자손인 리프노드에 이르는 모든 경로에는 동일한 개수의 black 노드가 존재한다.(어떤 경로를 따라 내려가더라도 도중에 만나는 black 노드의 갯수는 동일해야 한다.)
+
+노드 x 의 높이 h(x) 는 자신으로부터 리프노드(NIL) 까지의 가장 긴 경로에 포함된 에지의 개수이다.
+노드 x 의 블랙-높이 bh(x) 는 x 로부터 리프노드 까지의 경로상의 블랙 노드의 개수이다.(노드 x 자신은 포함하지 않는다.)
+
+레드 블랙트리의 높이
+- 높이가 h 인 노드의 블랙-높이는 bh >= h / 2 이다. (h : 리프까지 내려가는 가장 긴 경로에 포함되어 있는 에지의 갯수 - 경로상에서 자신을 제외한 노드의 갯수) * 조건 4 에 의해 레드 노드는 연속될 수 없으므로 당연하다.(경로상에 포함된 블랙 노드의 갯수는 해당 경로 에지 개수의 절반보다 크거나 같다.)
+- 노드 x 를 루트로 하는 임의의 부트리는 적어도 2^bh(x) - 1개의 내부 노드를 포함한다.(수학적 귀납법으로 증명할 수 있다.)
+- n개의 내부노드를 가지는 레드 블랙트리의 높이는 2log2(n + 1) 이하이다.
+  - n >= 2^bh - 1 >= 2^h/2 - 1 이므로, 여기서 bh 와 h는 각각 루트 노드의 블랙-높이와 높이
+
+레드 블랙트리에서 search, insert, delete 연산
+search 연산에 대해서는 따로 할 말 없음 - 레드 블랙트리에서 search 알고리즘은 일반 bst 에서의 search 알고리즘과 다른것이 없다.
+insert,delete 알고리즘이 공통적으로 필요로 하는 두 가지 기본적인 연산
+Left and Right Rotation(둘 다 bst 에서 한 노드를 중심으로 부분적으로 노드의 모양을 수정하는 operation)
+- 시간 복잡도 O(1)
+- 이진 탐색트리의 특성을 유지
+
+Left-ROTATE(T, x) // x 의 오른쪽 자식이 존재할 경우
+- x 의 오른쪽 자식 y 가 x의 자리로 올라오고 x 는 y 의 왼쪽 자식으로 내려간다.(원래 y의 왼쪽 자식은 x 의 오른쪽 자식으로 내려간다, 다른 부트리들은 자신의 자리를 그대로 유지한다.) - 이렇게 변형 되더라도 이진 탐색트리의 특성을 유지할 수 있다.
+
+Right-ROTATE(T, y) //Left-ROTATE 와 반대의 과정을 수행한다.
+
+Left-ROTATE 에 대한 슈도 코드
+- y = right[x] != NIL 이라고 가정한다. //x 의 오른쪽 자식이 존재해야 한다.
+- 루트 노드의 부모도 NIL 이라고 가정한다.
+
+LEFT-ROTATE(T, x) // T : bst, x : Left-rotate 를 실행할 노드
+1. y <- right[x] //Set y. //x 의 오른쪽자식을 y 로 둔다.
+2. right[x] <- left[y] //Turn y's left subtree into x's right subtree. // y의 왼쪽 자식을 x 의 오른쪽 자식으로 만든다.
+3. p[left[y]] <- x // y 의 왼쪽 자식의 부모를 x 로 둔다.
+4. p[y] <- p[x] //Link x's parent to y // x의 부모를 y의 부모로 둔다.
+5. if p[x] = nil[T] // x 의 부모가 NIL 이라면 (현재 x 가 root 라면?)
+6.	then root[T] <- y // y 를 root 로 둔다.
+7.	else if x = left[p[x]] // x 가 x 부모 노드의 왼쪽 자식이라면?
+8.		then left[p[x]] <- y // y 가 x 부모 노드의 왼쪽 자식이 된다.
+9.		else right[p[x]] <- y // 그렇지 않다면 x 부모 노드의 오른쪽 자식이 된다.
+10. left[y] <- x //Put x on y's left // x 가 y 의 왼쪽 자식이 된다.
+11. p[x] <- y // x 의 부모 노드가 y 가 된다.
+
+
+INSERT 알고리즘 슈도 코드
+- 보통의 bst 에서 처럼 노드를 INSERT 한다.(1 ~ 15 까지는 bst 에서 insert 알고리즘과 거의 완벽하게 동일하다.)
+- 새로운 노드 z 를 red 노드로 한다.
+- RB-INSERT-FIXUP 을 호출한다.
+RB-INSERT(T, z) // z : insert 할 노드(key 값 아님 - key 값을 저장한 노드), T : 레드 블랙트리
+1. y <- nil[T] // y 에 null 값 지정
+2. x <- root[T] // x를 루트로 둔다.
+3. while x != nil[T] // x 가 null 이 될때까지, x 의 key 를 insert 하려는 key 와 비교하여 크냐 작으냐에 따라 왼쪽 오른쪽으로 따라내려간 후 기본적으로 insert 할 위치를 찾는다.
+4.	do y <- x // y 가 항상 x 의 바로 뒤를 따로오게 해야 한다.
+5.		if key[z] < key[x]
+6.			then x <- left[x]
+7.			else x <- right[x]
+8. p[z] <- y //새로운 노드를 y 의 왼쪽 자식 또는 오른쪽 자식의 자리에 insert 한다.
+9. if y = nil[T] // y가 null 인 경우(새로운 노드 z 가 트리의 새로운 루트 가 되는 경우)
+10.	then root[T] <- z
+11.	else if key[z] < key[y] // y 가 null 이 아니라면, insert 할 노드 z 는 키 값이 y 의 키값 보다 작으냐 크냐에 따라 왼쪽 또는 오른쪽 자식이 된다. 
+12.		then left[y] <- z
+13.		else right[y] <- z
+14. left[z] <- nil[T] //새로 입력한 노드는 항상 리프 노드가 되기 때문에 왼쪽, 오른쪽 자식은 null 값을 받게 된다.
+15. right[z] <- nil[T]
+// 16 ~ 17 : 레드 블랙트리를 위해 추가적으로 하는 일
+16. color[z] <- RED // 새로 insert 된 노드는 일단 red node 로 설정한다.(새로 insert 한 노드를 무작정 red node 로 설정한 것이므로 레드 블랙트리에 있어 오류가 생길 가능성이 있다.(red-red violation 위반))
+17. RB-INSERT-FIXUP(T, z) //위와 같은 위반 사항을 방지하기 위해 호출한다.
+
+RB-INSERT-FIXUP
+- 위반될 가능성이 있는 조건들
+1. OK //모든 노드는 red or black 이어야 한다.
+2. 만약 z 가 루트노드라면 위반, 아니라면 OK //root node 는 black 이어야 한다.(원래 트리가 empty tree였다면 위반될 가능성이 있다.)
+-> root node 가 red node 라면(다른 노드들은 문제 없는 경우) 단순히 black node 로 바꿔주는 것만으로 해결할 수 있다.
+3. OK // 모든 nil 노드는 black 이어야 한다.(새로 insert 된 node 는 red node 이다. - key 값이 있음)
+4. z 의 부모 p[z] 가 red 이면 위반. //가장 중점적으로 봐야 하는 문제
+5. OK // 어떤 노드에서 출발하든 자손인 nil 까지 내려가는 동안 만나는 black node 의 갯수는 동일 해야 한다.
+
+Loop Invariant : // loop 를 도는 동안 변하지 않고 유지되는 조건
+- z 는 red node
+- 오직 하나의 위반만이 존재한다.
+  - 조건 2 : z가 루트 노드이면서 red 이거나, 또는
+  - 조건 4 : z 와 그 부모 p[z] 가 둘 다 red 이거나.
+  // loop 가 한 번 돌때마다 red-red 위반 관계인 트리를 트리의 위쪽으로 올려준다.(문제가 되는 쌍을 루트 까지 올려주면 문제가 자연스레 해결되는 과정을 이용한다.(heap 참고)) - loop 을 돌다가 부모 노드가 black 이 되면 종료, 루트까지 red 가 되는 경우가 최악의 경우(루트를 black 으로 바꿔줌으로서 해결한다.)
+종료 조건:
+- 부모 노드 p[z] 가 black 이 되면 종료한다. 조건 2가 위반일 경우 z를 블랙으로 바꿔주고 종료한다.
+
+경우 1,2,3 :  p[z] 가 p[p[z]](할아버지 노드) 의 왼쪽 자식인 경우 (할아버지 노드는 반드시 존재한다, 왜? p[z] 가 red 이므로 root 는 될 수 없기 때문)
+경우 4,5,6 : p[z] 가 p[p[z]] 의 오른쪽 자식인 경우
+경우 1,2,3, 과 4,5,6 은 서로 대칭적이다.(left, right 만 바꾸면 됨)
+
+경우1 : z의 삼촌이 red 인 경우(부모 노드의 형제 노드가 red 인 경우, 할아버지 노드는 black)
+- 부모 노드 ,삼촌 노드의 컬러와 할아버지 노드의 컬러를 서로 스위치 한다.(부모, 삼촌 : 빨, 할아버지 : 검 -> 부모, 삼촌 : 검, 할아버지 : 빨)
+- 이후 할아버지 노드를 새로운 z node 로 설정한다.
+트리의 구조를 바꾸는 것이 아니므로 bst 의 조건에는 영향을 끼치지 않는다.
+조건 2 와 4 이외의 조건들은 여전히 OK 면서 z 가 두 칸 위로 올라가게 된다.
+다만 할아버지 노드가 레드 노드로 바뀌었으므로 할아버지 노드와 할아버지 부모노드 사이에서는 문제가 발생할 수 있다.
+최악의 경우 루트 노드 까지 올라가게 될 수 있다.
+
+경우 2, 3 : z 의 삼촌이 black 인 경우
+- 경우 2 : z 가 오른쪽 자식인 경우
+   - p[z] 에 대해서 left-rotation 한 후 원래 p[z] 를 z 로 지정한 다음 경우 3으로 넘긴다.
+- 경우 3 : z 가 왼쪽 자식인 경우
+   - p[z] 를 black, p[p[z]] 를 red 로 바꾼다.
+   - p[p[z]] 에 대해서 right-rotation 한다.
+
+RB-INSERT-FIXUP 슈도 코드
+RB-INSERT-FIXUP(T, z) // z : insert 하는 노드
+1. while color[p[z]] = RED // z의 부모가 red 인 동안 반복(red-red violation 이 존재한다는 뜻) - 원래는 노드 z 가 root 가 되면 그 순간에 반복문을 빠져나와야 한다, root node 의 부모 노드도 nil 이라고 가정하고 있고, nil 노드는 black 이기 때문에, 설사 z 가 root 가 되더라도 root node 의 부모 노드는 nil 노드이고 색깔은 black 이므로, 조건을 위와 같이 써 놓아도 z 가 root 가 되면 반복문을 빠져나오게 된다.(z 의 부모노드가 nil 이면서 black 이기 때문) 
+하지만 실제로 코딩할 때는 nil 노드 같은걸 만들지는 않을 것이기 때문에, p[z] != null && color[p[z]] == red 이런식으로 해야 한다.
+2.	do if p[z] = left[p[p[z]]] //할아버지 노드의 왼쪽 자식이 z 의 부모 노드인 동안
+3.		then y <- right[p[p[z]]] // y : 삼촌 노드
+4.			if color[y] = RED // 삼촌 노드가 red 인 경우
+5.				then color[p[z]] <- BLACK //Case 1 //부모 - black 변환
+6.				       color[y] <- BLACK //Case 1 //삼촌 - black 변환
+7.				       color[p[p[z]]] <- RED //Case 1 //할아버지 - red 변환
+8.				       z <- p[p[z]] //Case 1 //할아버지 노드를 새로운 z 노들 변경
+9.				else if z = right[p[z]] // 삼촌 노드가 black 인 경우, z 노드가 부모 노드의 오른쪽 자식인 경우
+10.					then z <- p[z] //Case 2 // 부모 노드를 z 로 지정
+11.						LEFT-ROTATE(T, z) //Case 2 //left-rotation 이후 Case 3 로 넘어감
+12.					color[p[z]] <- BLACK //Case 3
+13.					color[p[p[z]]] <- RED //Case 3 //부모 노드와 할아버지 노드 간 색깔 변경
+14.					RIGHT-ROTATE(T, p[p[z]]) //Case 3 //할아버지 노드에 대해서 right-rotation
+15.			else (same as then clause with "right" and "left" exchanged) //Case 4,5,6
+16. color[root[T]] <- BLACK //반복문을 빠져나온다. (Case 1 인 상태에서 반복문을 빠져나오면 root 가 red 인 상태일 수 있으므로 색을 black 으로 변경해준다.)
+
+INSERT 의 시간 복잡도
+- bst 에서의 insert : O(log2n)
+- RB-INSERT-FIXUP
+  - 경우1 에 해당할 경우 z 가 2레벨 상승
+  - 경우2,3 에 해당할 경우 O(1)
+  - 따라서 트리의 높이에 비례하는 시간이 걸리게 된다.
+- 즉, INSERT 의 시간복잡도는 O(log2n)
+
+
+레드 블랙트리 DELETE 알고리즘
+보통의 bst 에서 처럼 delete 한다.(1 ~ 15 까지는 bst 에서 delete 알고리즘과 완벽하게 일치한다.)
+실제로 삭제된 노드 y가 red 였으면 종료
+y 가 black 이었을 경우 RB-DELETE-FIXUP 을 호출한다. 
+(삭제한 노드가 루트 였다면? 그 자식이었던 레드가 루트로 올라올 수 있다, 또는 중간에 있던 black 이 사라지면서 red-red violation 이 발생 할 수 있다.
+가장 큰 문제는 조건 5를 위배하는 경우다. - RB-DELETE-FIXUP 을 호출해서 해당 문제를 해결한다.)
+
+delete 알고리즘 슈도 코드
+RB_DELETE(T, z) // z : 삭제하는 노드
+1. if left[z] = nil[T] or right[z] = nil[T] //자식이 없거나 자식이 하나 있다.
+2.	then y <- z // z에 y 를 준 후 삭제
+3.	else y <- TREE-SUCCESSOR(z) //자식이 둘 이상일 경우 successor 노드를 찾아서 해당 노드를 삭제한다.
+4. if left[y] != nil[T] //노드 y 는 자식이 최대 하나이다.
+5.	then x <- left[y]
+6.	else x <- right[y]
+7. p[x] <- p[y]
+8. if p[y] = nil[T] // y 노드 자신이 트리의 루트 인 경우
+9.	then root[T] <- x // x 가 트리의 루트가 된다.
+10.	else if y = left[p[y]] // y사 루트 가 아닌 경우
+11.		then left[p[y]] <- x
+12.		else right[p[y]] <- x
+13. if y != z //원래 삭제하려고 했던 노드 z 가 아닌경우(successor 를 삭제한 경우)
+14.	then key[z] <- key[y]
+15.		copy y's satellite data into z // y에 있던 데이터들을 z 로 옮겨준다. 
+16. if color[y] = BLACK
+17.	then RB-DELETE-FIXUP(T, x) // 여기서 x 는 y가 자식이 있었을 경우 그 자식노드, 없었을 경우 NIL 노드 (원래 삭제한 노드의 자식노드)
+			          // 두 경우 모두 p[x] 는 원래 p[y] 였던 노드
+18. return y
+// x 는 원래 red 였는데 black 인 부모 노드 y가 삭제되고, 대신 x가 직접 p[y] 의 자식 노드가 된 경우, x 를 black 노드로 바꿔주면 모든 문제가 해결된다.
+// x 도 black 인 경우는 문제가 될 수도 있다. (또는 x 가 NIL 노드 인 경우)
+
+RB_DELETE-FIXUP(T, x) // x 가 NIL 노드일 수 있다., red 노드라면 쉽게 해결할 수 있다, black 일 경우 문제가 발생한다.
+1. OK
+2. y 가 루트였고, x 가 red 인 경우 위반
+3. OK
+4. p[y] 와 x가 모두 red 일 경우 위반 // x 를 black 으로 바꿔주면 끝
+5. 원래 y를 포함했던 모든 경로는 이제 black 노드가 하나 부족하다.
+- 노드 x에 "extra black" 을 부여해서 일단 조건 5를 만족
+- 노드 x 는 "double black" 혹은 "red & black"
+//어떻게든 double black 노드를 정상적인 노드로 만드는 것이 할 일 이다.
+
+아이디어:
+- extra black 을 트리의 위쪽으로 올려보낸다.
+- x 가 red & black 상태가 되면 그냥 black 노드로 만들고 끝낸다.(red 를 없애버림)
+- x 가 루트가 되면 그냥 extra black 을 제거한다. //최악의 경우
+Loop Invariant
+- x 는 루트가 아닌 double-black 노드
+- w 는 x의 형제노드
+- w는 NIL 노드가 될 수 없음 (아니면 x의 부모에 대해 조건 5가 위반)
+
+
+DELETE 의 경우  Case 가 8가지로 나뉜다.(1,2,3,4 <-대칭-> 5,6,7,8)
+1,2,3,4 : x 가 부모노드의 왼쪽 자식인 경우 (x 는 NIL 일 수도 있다 - 코딩할 때 조심해야함)
+5,6,7,8 : x 가 부모노드의 오른쪽 자식인 경우
+
+경우 1 : w 가 red 인 경우(w는 반드시 자식노드를 가져야 하고, 자식노드 들은 둘 다 블랙 이다.) //w의 자식노드들은 NIL 일 수 없다.(조건 5에 위반됨 )
+- w 의 자식들은 black
+- w 를 black 으로, p[x] 를 red 로 바꾼다.
+- p[x] 에 대해서 left-rotation 적용
+- x 의 새로운 형제노드는 원래 w의 자식노드, 따라서 black 노드
+- 경우 2,3, 혹은 4에 해당한다.
+
+경우2 : w는 black, w의 자식들도 black 
+- x 의 extra-black 을 뺏고, w를 red 로 바꾼다.
+- p[x] 에게 뺏은 extra-black 을 준다
+- p[x] 를 새로운 x 로 해서 계속
+- 만약 경우 1 에서 이 경우에 도달했다면 p[x] 는 red 였고, 따라서 새로운 x는 red & black 이 되어서 종료된다.
