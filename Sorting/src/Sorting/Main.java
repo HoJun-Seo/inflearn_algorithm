@@ -10,20 +10,14 @@ public class Main{
 	    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	    String str = br.readLine();
 	    StringTokenizer st = new StringTokenizer(str);
-	    double []data = new double[3];
-	    double result = 1;
+	    long []data = new long[3];
 	    int i = 0;
-	    
+	    int day = 1;
 	    for(i = 0; i < 3; i++) {
 	    	data[i] = Integer.parseInt(st.nextToken());
-	    	result *= data[i];
 	    }
+	    while(day % data[0] != 0 || day % data[1] != 0 || day % data[2] != 0)day++;
+	    System.out.println(day);
 	    
-	    for(i = 0; i < 2; i++) {
-	    	result /= 1024;
-	    }
-	    
-	    result /= 8;
-	    System.out.println(String.format("%.2f MB", result));
 	}
 }
