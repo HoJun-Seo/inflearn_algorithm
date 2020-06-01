@@ -8,16 +8,19 @@ import java.util.StringTokenizer;
 public class Main{
 	public static void main(String []args) throws IOException{
 	    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	    String str = br.readLine();
-	    StringTokenizer st = new StringTokenizer(str);
-	    long []data = new long[3];
-	    int i = 0;
-	    int day = 1;
-	    for(i = 0; i < 3; i++) {
-	    	data[i] = Integer.parseInt(st.nextToken());
+	    String str1 = br.readLine();
+	    String str2 = br.readLine();
+	    StringTokenizer st1 = new StringTokenizer(str1);
+	    StringTokenizer st2 = new StringTokenizer(str2);
+	    int count = Integer.parseInt(st1.nextToken());
+	    int []data = new int[count];
+	    for(int i = 0; i < count; i++) {
+	    	data[i] = Integer.parseInt(st2.nextToken());
 	    }
-	    while(day % data[0] != 0 || day % data[1] != 0 || day % data[2] != 0)day++;
-	    System.out.println(day);
-	    
+	    int pivot = data[0];
+	    for(int i = 1; i < count; i++) {
+	    	if(pivot > data[i]) pivot = data[i];
+	    }
+	    System.out.println(pivot);
 	}
 }
