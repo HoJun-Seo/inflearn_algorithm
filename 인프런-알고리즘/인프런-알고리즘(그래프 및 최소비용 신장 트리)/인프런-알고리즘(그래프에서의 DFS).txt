@@ -1,0 +1,27 @@
+깊이 우선순회(탐색)(DFS) - inorder, preorder, postorder traversal 은 사실 DFS 의 이진트리 버전이라고 볼 수 있다.(DFS 를 좀 더 세분화하여 앞과 같은 세가지 방식으로 나뉜것.)
+1. 출발점 s 에서 시작한다.
+2. 현재 노드를 visited 로 mark 하고 인접한 노드들 중 unvisited 노드가 존재하면 그 노드로 간다.
+3. 2번을 계속 반복한다.
+4. 만약 unvisited 인 이웃 노드가 존재하지 않으면 계속해서 직전 노드로 되돌아간다.
+5. 다시 2번을 반복한다.
+6. 시작노드 s 로 돌아오고 더 이상 갈 곳이 없으면 종료한다.
+
+슈도 코드
+DFS(G,v)
+    visited[v] <- YES;
+    for each node adjacent to x do
+        if visited[v] = NO then // visited 가 NO 인 노드가 하나도 없으면 for 문을 빠져나가게 된다.(메소드 종료)
+            DFS(G,u); //재귀 호출
+    end.
+end.
+
+그래프가 disconnected 이거나 방향 그래프라면 DFS 에 의해서 모든 노드가 방문되지 않을 수 있음(DFS 를 한 번 호출하는 것으로는 충분하지 않다.)
+이럴 경우 DFS 를 반복하여 모든 노드를 방문한다.
+DFS-ALL(G) d- 시간복잡도 : O(n + m) : 인접리스트로 표현 했을 경우의 시간복잡도(인접 행렬로 표현할 경우 시간복잡도는 O(n^2) 이 된다.)
+{
+    for each v (모든 노드 집합 V 에 포함되어 있는 노드 v)
+        visited[v] <- NO;
+    for each v 
+        if(visited[v] = NO) then
+            DFS(G,V);
+}
